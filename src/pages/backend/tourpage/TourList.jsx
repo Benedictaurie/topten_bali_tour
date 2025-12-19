@@ -172,13 +172,13 @@ const TourList = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
-                        <Link
+                        {/* <Link
                           to={`/admin/tours/${tour.id}`}
                           className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50 transition-colors"
                           title="View Details"
                         >
                           <FiEye size={18} />
-                        </Link>
+                        </Link> */}
                         
                         <Link
                           to={`/admin/tours/edit/${tour.id}`}

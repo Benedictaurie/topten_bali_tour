@@ -6,32 +6,59 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function HomePage() {
-  // const { 
-  //   tours, 
-  //   loading, 
-  //   error, 
-  //   fetchAvailableTours 
-  // } = useCustomerTour();
-
-  // // Fetch data saat komponen mount
-  // useEffect(() => {
-  //   fetchAvailableTours();
-  // }, [fetchAvailableTours]);
-
-  // // Ambil hanya 6 paket untuk homepage
-  // const homepagePackages = tours.slice(0, 6);
+  const [tours, setTours] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [rentals, setRentals] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
+  const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
+
   const images = [
     "assets/appimages/herosection/Nusa-Penida-Bali.jpg",
     "assets/appimages/herosection/Pura Luhur Lempuyang.jpg",
     "assets/appimages/herosection/Pura Ulun Danu Bratan Temple.jpg",
   ];
 
-  const [current, setCurrent] = useState(0);
-  const navigate = useNavigate();
+  // Fetch data saat komponen mount
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Fetch semua data paralel
+        const [toursRes, activitiesRes, rentalsRes] = await Promise.all([
+          fetch('http://localhost:8000/api/tour-packages').then(res => res.json()),
+          fetch('http://localhost:8000/api/activity-packages/get').then(res => res.json()),
+          fetch('http://localhost:8000/api/rental-packages/get').then(res => res.json())
+        ]);
+
+        // Cek jika response sukses
+        if (toursRes.success) {
+          setTours(toursRes.data.slice(0, 6)); // Ambil 6 pertama
+        }
+        if (activitiesRes.success) {
+          setActivities(activitiesRes.data.slice(0, 6)); // Ambil 6 pertama
+        }
+        if (rentalsRes.success) {
+          setRentals(rentalsRes.data.slice(0, 3)); // Ambil 3 pertama untuk rental
+        }
+        
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,12 +67,31 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // Fungsi untuk navigasi ke halaman detail
-  const handleDetailClick = (type, packageName) => {
-    // Konversi nama paket menjadi format URL-friendly
-    const formattedName = packageName.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/${type}/${formattedName}`);
+  // Fungsi untuk menampilkan gambar atau default
+  const getImageUrl = (item) => {
+    if (item?.images?.length > 0 && item.images[0]?.image) {
+      return `http://localhost:8000/storage/${item.images[0].image}`;
+    }
+    return "/assets/appimages/webimage/default.jpg";
   };
+
+  // Format harga
+  const formatPrice = (price) => {
+    if (!price) return 'Rp. 0';
+    return `Rp. ${parseInt(price).toLocaleString('id-ID')}`;
+  };
+
+  // Komponen Skeleton Loading
+  const PackageSkeleton = () => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="w-full h-48 bg-gray-200 animate-pulse"></div>
+      <div className="p-4 text-center">
+        <div className="h-4 bg-gray-200 rounded mb-2 animate-pulse"></div>
+        <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto animate-pulse"></div>
+        <div className="mt-3 h-8 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+  );
 
   return (
     <FrontendLayout>
@@ -65,12 +111,12 @@ export default function HomePage() {
         ))}
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         <div className="relative z-10 text-center">
-          <h1 className="text-6xl font-extrabold mb-6 tracking-wide drop-shadow-lg">LET’S TRAVEL!</h1>
+          <h1 className="text-6xl font-extrabold mb-6 tracking-wide drop-shadow-lg">LET'S TRAVEL!</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Experience the Island of Gods with curated tours, unforgettable activities, and seamless transportation.</p>
         </div>
       </section>
 
-      {/* About Section */}
+      {/* About Section - TIDAK DIHAPUS */}
       <section id="about" className="py-20 px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -121,10 +167,6 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-              
-              {/* <button className="bg-gradient-to-r from-gray-600 to-blue-600 hover:from-blue-700 hover:to-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
-                Discover Our Story →
-              </button> */}
             </div>
           </div>
         </div>
@@ -146,30 +188,64 @@ export default function HomePage() {
               From cultural landmarks to breathtaking landscapes, we'll show you the real Bali.
             </p>
 
+            {error && (
+              <div className="text-red-500 mb-4 p-3 bg-red-50 rounded-lg">
+                {error}
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="ml-3 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-              {[
-                { title: "Paket 1 hari", price: "Rp. 123.000", img: "/assets/appimages/webimage/tanah-lot-temple.jpg" },
-                { title: "Paket 2 hari", price: "Rp. 266.000", img: "/assets/appimages/webimage/monkey_forest.jpg" },
-                { title: "Paket 3 hari", price: "Rp. 340.000", img: "/assets/appimages/webimage/tour3.jpg" },
-                { title: "Paket 4 hari", price: "Rp. 410.000", img: "/assets/appimages/webimage/tour4.jpg" },
-                { title: "Paket 5 hari", price: "Rp. 520.000", img: "/assets/appimages/webimage/tour5.jpg" },
-                { title: "Paket 6 hari", price: "Rp. 611.000", img: "/assets/appimages/webimage/tour6.jpg" },
-              ].map((pkg, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src={pkg.img} alt={pkg.title} className="w-full h-48 object-cover" />
-                  <div className="p-4 text-center">
-                    <h4 className="font-semibold">{pkg.title}</h4>
-                    <p className="text-sm">{pkg.price}</p>
-                    <button onClick={() => handleDetailClick('paket-tours', pkg.title)} className="mt-2 px-4 py-1 bg-gray-200 hover:bg-gray-300 rounded">
-                      DETAIL
-                    </button>
-                  </div>
+              {loading ? (
+                // Skeleton loading saat fetch data
+                Array.from({ length: 6 }).map((_, i) => (
+                  <PackageSkeleton key={i} />
+                ))
+              ) : tours.length === 0 ? (
+                // Jika tidak ada data
+                <div className="col-span-3 text-center py-8 text-gray-500">
+                  No tour packages available at the moment.
                 </div>
-              ))}
+              ) : (
+                // Tampilkan data tour (maks 6)
+                tours.slice(0, 6).map((tour) => (
+                  <div key={tour.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <img 
+                      src={getImageUrl(tour)} 
+                      alt={tour.name} 
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4 text-center">
+                      <h4 className="font-semibold text-gray-800 line-clamp-1">{tour.name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {formatPrice(tour.price_per_person)}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        ⏱️ {tour.duration_days || tour.duration || '1'} day(s) • 
+                        👥 Min. {tour.min_persons || 1} person(s)
+                      </p>
+                      <Link
+                        to={`/tour-packages/${tour.slug}`}
+                        className="mt-3 inline-block px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+                      >
+                        DETAIL
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-            <button className="mt-6 px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 rounded">
-              <a href="/tour-packages">More</a>
-            </button>
+            <Link 
+              to="/tour-packages"
+              className="mt-6 inline-block px-6 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+            >
+              More Tours →
+            </Link>
           </div>
           
           {/* Paket Activity Section */}
@@ -181,32 +257,51 @@ export default function HomePage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-              {[
-                { title: "ATV", price: "Rp. 410.000", img: "/assets/appimages/webimage/atv.jpg" },
-                { title: "Swing", price: "Rp. 410.000", img: "/assets/appimages/webimage/swing.jpg" },
-                { title: "Water Sports", price: "Rp. 410.000", img: "/assets/appimages/webimage/watersport.jpg" },
-                { title: "Rafting", price: "Rp. 410.000", img: "/assets/appimages/webimage/rafting.jpg" },
-                { title: "Helicopter", price: "Rp. 410.000", img: "/assets/appimages/webimage/heli.jpg" },
-                { title: "Surfing", price: "Rp. 410.000", img: "/assets/appimages/webimage/surfing.jpg" },
-              ].map((pkg, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src={pkg.img} alt={pkg.title} className="w-full h-48 object-cover"/>
-                  <div className="p-4 text-center">
-                    <h4 className="font-semibold">{pkg.title}</h4>
-                    <p className="text-sm">{pkg.price}</p>
-                    <button onClick={() => handleDetailClick('activities', pkg.title)} className="mt-2 px-4 py-1 bg-gray-200 hover:bg-gray-300 rounded">
-                      See Details
-                    </button>
-                  </div>
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <PackageSkeleton key={i} />
+                ))
+              ) : activities.length === 0 ? (
+                <div className="col-span-3 text-center py-8 text-gray-500">
+                  No activity packages available at the moment.
                 </div>
-              ))}
+              ) : (
+                activities.slice(0, 6).map((activity) => (
+                  <div key={activity.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <img 
+                      src={getImageUrl(activity)} 
+                      alt={activity.name} 
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4 text-center">
+                      <h4 className="font-semibold text-gray-800 line-clamp-1">{activity.name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {formatPrice(activity.price_per_person)}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        ⏱️ {activity.duration_hours || '1'} hour(s) • 
+                        👥 Min. {activity.min_persons || 1} person(s)
+                      </p>
+                      <Link
+                        to={`/activity-packages/${activity.slug}`}
+                        className="mt-3 inline-block px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+                      >
+                        DETAIL
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-            <button className="mt-6 px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 rounded">
-              <a href="/activity-packages">More</a>
-            </button>
+            <Link 
+              to="/activity-packages"
+              className="mt-6 inline-block px-6 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+            >
+              More Activities →
+            </Link>
           </div>
               
-          {/* Paket Rental Section */}
+          {/* Paket Rental Section - MAKSIMAL 3 */}
           <div className="mb-20">
             <h3 className="text-2xl font-semibold mb-8 text-gray-800">RENTAL MOBIL/MOTOR</h3>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -215,28 +310,51 @@ export default function HomePage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-              {[
-                { title: "Hiace", price: "Rp. 220.000", img: "/assets/appimages/hiace.png" },
-                { title: "Yamaha Mio Z Suzuki", price: "Rp. 120.000", img: "/assets/appimages/Yamaha-Mio-Z.jpg" },
-              ].map((pkg, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src={pkg.img} alt={pkg.title} className="w-full h-48 object-cover" />
-                  <div className="p-4 text-center">
-                    <h4 className="font-semibold">{pkg.title}</h4>
-                    <p className="text-sm">{pkg.price}</p>
-                    <button onClick={() => handleDetailClick('rentals', pkg.title)} className="mt-2 px-4 py-1 bg-gray-200 hover:bg-gray-300 rounded">
-                      See Details
-                    </button>
-                  </div>
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <PackageSkeleton key={i} />
+                ))
+              ) : rentals.length === 0 ? (
+                <div className="col-span-3 text-center py-8 text-gray-500">
+                  No rental packages available at the moment.
                 </div>
-              ))}
+              ) : (
+                rentals.slice(0, 3).map((rental) => (
+                  <div key={rental.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <img 
+                      src={getImageUrl(rental)} 
+                      alt={rental.name} 
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4 text-center">
+                      <h4 className="font-semibold text-gray-800 line-clamp-1">{rental.name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {formatPrice(rental.price_per_day || rental.price)}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        🚗 {rental.type || 'Vehicle'} • 
+                        🏷️ {rental.brand || ''}
+                      </p>
+                      <Link
+                        to={`/rental-packages/${rental.slug}`}
+                        className="mt-3 inline-block px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+                      >
+                        DETAIL
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-            <button className="mt-6 px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 rounded">
-              <a href="/rental-packages">More</a>
-            </button>
+            <Link 
+              to="/rental-packages"
+              className="mt-6 inline-block px-6 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 text-white rounded transition duration-300"
+            >
+              More Rentals →
+            </Link>
           </div>
 
-          {/*Testimonial Section*/}
+          {/* Testimonial Section (SAMA) */}
           <div className="mb-16">
             <h3 className="text-2xl font-semibold mb-4 text-gray-800">CUSTOMER REVIEWS</h3>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -245,17 +363,17 @@ export default function HomePage() {
 
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
-              spaceBetween={20} //jarak tiap card
-              slidesPerView={1} //atur slidenya
+              spaceBetween={20}
+              slidesPerView={1}
               breakpoints={{
-                640: { slidesPerView: 1 }, //atur slide di mobile - 1 card
-                768: { slidesPerView: 2 }, //atur slide di tablet - 2 card
-                1024: { slidesPerView: 3 }, //atur slide di desktop - 3 card
+                640: { slidesPerView: 1 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
               }}
-              navigation //menampilkan panah kiri-kanan
-              pagination={{ clickable: true }} //titik pagination dibawah slider
-              autoplay={{ delay: 5000, disableOnInteraction: false }} //otomatis geser tiap 5 detik
-              loop={true} //geser terus tnpa habis
+              navigation
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 5000, disableOnInteraction: false }}
+              loop={true}
               className="pb-12"
             >
               {[
@@ -309,80 +427,9 @@ export default function HomePage() {
                 </SwiperSlide>
               ))}
             </Swiper>
-            <div className="text-center mt-4">
-              <button 
-                onClick={() => {
-                  if (user) {
-                    navigate('/my-bookings'); // Arahkan ke my bookings
-                  } else {
-                    navigate('/login'); // Arahkan ke login dulu
-                  }
-                }}
-                className="px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 rounded text-white"
-              >
-                Write a Review
-              </button>
-            </div>
           </div>
         </div>
       </section> 
     </FrontendLayout>
   );
 }
-
-//Perbaikan biar ssama dgn backend
-// Di HomePage.jsx - Testimonial Section
-// import { useState, useEffect } from 'react';
-
-// export default function HomePage() {
-//   const [reviews, setReviews] = useState([]);
-//   const [user, setUser] = useState(null); // ✅ Untuk cek login
-
-//   // ✅ Fetch real reviews dari API
-//   useEffect(() => {
-//     const fetchReviews = async () => {
-//       try {
-//         const response = await fetch('/api/reviews');
-//         const data = await response.json();
-//         if (data.success) {
-//           setReviews(data.data.reviews);2
-//         }
-//       } catch (error) {
-//         console.error('Failed to fetch reviews:', error);
-//       }
-//     };
-
-//     fetchReviews();
-//   }, []);
-
-//   // ✅ Ganti hardcoded testimonials dengan real data
-//   <Swiper
-//     // ... swiper props ...
-//   >
-//     {reviews.map((review) => (
-//       <SwiperSlide key={review.id}>
-//         <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-//           <div className="flex items-center mb-4">
-//             <div className="w-12 h-12 bg-gradient-to-r from-gray-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
-//               {review.user_initial}
-//             </div>
-//             <div>
-//               <span className="font-semibold text-gray-800 block">{review.user_name}</span>
-//               <span className="text-sm text-gray-500">{review.travel_date}</span>
-//             </div>
-//           </div>
-//           <p className="text-yellow-500 text-lg mb-3">{review.stars}</p>
-//           <p className="text-gray-700 leading-relaxed">
-//             "{review.comment}"
-//           </p>
-//           {review.image && (
-//             <img 
-//               src={review.image} 
-//               alt="Review" 
-//               className="mt-3 rounded-lg w-full h-32 object-cover"
-//             />
-//           )}
-//         </div>
-//       </SwiperSlide>
-//     ))}
-//   </Swiper>
