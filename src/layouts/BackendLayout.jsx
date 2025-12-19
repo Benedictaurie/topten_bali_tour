@@ -36,6 +36,7 @@ const BackendLayout = ({ children }) => {
     { path: '/admin/tours', icon: FiPackage, label: 'Tour Packages' },
     { path: '/admin/activities', icon: FiActivity, label: 'Activity Packages' },
     { path: '/admin/rentals', icon: FiTruck, label: 'Rental Packages' },
+    // { path: '/admin/notifications', icon: FiBell, label: 'Send Notifications' },
     // { path: '/admin/users', icon: FiUsers, label: 'User Management' },
     // { path: '/admin/bookings', icon: FiCalendar, label: 'Booking Management' },
     // { path: '/admin/payments', icon: FiCreditCard, label: 'Payment Transactions' },

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import FrontendLayout from "../../layouts/FrontendLayout";
 import { useUserActivity } from "../../hooks/useUserActivity";
 
@@ -22,12 +23,15 @@ export default function PaketActivityPage() {
     return "/assets/appimages/webimage/default.jpg";
   };
 
-  // Fetch activity saat page load
+  const getActivityPrice = (activity) => {
+    if (!activity?.price_per_person) return "0";
+    return Number(activity.price_per_person).toLocaleString("id-ID");
+  };
+
   useEffect(() => {
     fetchAvailableActivities();
   }, [fetchAvailableActivities]);
 
-  // Filter search & category
   const filteredActivities = activities.filter((act) => {
     const matchesSearch =
       act.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,37 +44,9 @@ export default function PaketActivityPage() {
     return matchesSearch && matchesCategory;
   });
 
-  // ================== UI STATE ==================
-  if (loading) {
-    return (
-      <FrontendLayout title="Activity">
-        <div className="flex justify-center items-center h-64">
-          <p>Loading activities...</p>
-        </div>
-      </FrontendLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <FrontendLayout title="Activity">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-red-500">{error}</p>
-          <button
-            onClick={fetchAvailableActivities}
-            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Retry
-          </button>
-        </div>
-      </FrontendLayout>
-    );
-  }
-
-  // ================== MAIN UI ==================
   return (
     <FrontendLayout title="Activity">
-      {/* Header */}
+      {/* Header (TIDAK DIUBAH) */}
       <div className="relative">
         <img
           src="/assets/appimages/webimage/rafting.jpg"
@@ -81,7 +57,7 @@ export default function PaketActivityPage() {
           <h1 className="text-4xl font-bold">ACTIVITY</h1>
         </div>
 
-        {/* Search & Filter */}
+        {/* Search & Filter (TIDAK DIUBAH) */}
         <div className="absolute bottom-[-40px] w-full flex justify-center">
           <div className="bg-white shadow-md p-4 rounded-lg flex gap-4 w-[80%] max-w-3xl">
             <input
@@ -119,7 +95,13 @@ export default function PaketActivityPage() {
 
       {/* Content */}
       <section className="pt-32 pb-20 px-8 bg-white">
-        {filteredActivities.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-gray-500">
+            Loading paket activity...
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : filteredActivities.length === 0 ? (
           <div className="text-center text-gray-500">
             Tidak ada activity ditemukan.
           </div>
@@ -151,17 +133,16 @@ export default function PaketActivityPage() {
                     <div>
                       <p className="text-xs text-gray-500">Start from</p>
                       <p className="font-semibold">
-                        Rp{" "}
-                        {activity.price?.toLocaleString("id-ID") || "0"}
+                        Rp {getActivityPrice(activity)}
                       </p>
                     </div>
 
-                    <a
-                      href={`/activities/${activity.slug}`}
+                    <Link
+                      to={`/activity-packages/${activity.slug}`}
                       className="px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 text-white rounded text-sm"
                     >
                       Detail
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

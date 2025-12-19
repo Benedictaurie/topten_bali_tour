@@ -1,5 +1,6 @@
 // src/pages/PaketTourPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import FrontendLayout from "../../layouts/FrontendLayout";
 import { useUserTour } from "../../hooks/useUserTour";
 
@@ -194,12 +195,12 @@ export default function PaketTourPage() {
                           Rp. {pkg.price_per_person?.toLocaleString('id-ID') || '0'}
                         </p>
                       </div>
-                      <a 
-                        href={`/tour-packages/${pkg.slug}`}
-                        className="px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 hover:from-blue-400 hover:to-gray-400 rounded text-sm text-white transition"
+                      <Link
+                        to={`/tour-packages/${pkg.slug}`}
+                        className="px-4 py-2 bg-gradient-to-r from-gray-400 to-blue-400 text-white rounded text-sm"
                       >
                         Detail
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>

@@ -8,7 +8,9 @@ import HomePage from './pages/frontend/HomePage';
 import PaketTourPage from './pages/frontend/PaketTourPage';
 import TourDetailPage from './pages/frontend/tourdetails/TourDetailPage';
 import PaketActivityPage from './pages/frontend/PaketActivityPage'; 
+import ActivityDetailPage from './pages/frontend/activitydetails/ActivityDetailPage';
 import PaketRentalPage from './pages/frontend/PaketRentalPage'; 
+import RentalDetailPage from './pages/frontend/rentaldetails/RentalDetailPage';
 // import ReviewPage from './pages/frontend/ReviewPage';
 
 // Auth Pages
@@ -22,14 +24,13 @@ import AdminProfile from './pages/backend/profile/AdminProfile';
 import TourList from './pages/backend/tourpage/TourList';
 import TourCreate from './pages/backend/tourpage/TourCreate';
 import TourEdit from './pages/backend/tourpage/TourEdit';
-import TourDetail from './pages/backend/tourpage/TourDetail';
 import RentalList from './pages/backend/rentalpage/RentalList';
 import RentalCreate from './pages/backend/rentalpage/RentalCreate';
 import RentalEdit from './pages/backend/rentalpage/RentalEdit';
 import ActivityList from './pages/backend/activitypage/ActivityList';
 import ActivityCreate from './pages/backend/activitypage/ActivityCreate';
 import ActivityEdit from './pages/backend/activitypage/ActivityEdit';
-
+// import AdminNotificationPage from './pages/admin/AdminNotificationPage';
 
 function App() {
   return (
@@ -45,9 +46,9 @@ function App() {
         <Route path="/tour-packages" element={<PaketTourPage />} />
         <Route path="/tour-packages/:slug" element={<TourDetailPage />} />
         <Route path="/activity-packages" element={<PaketActivityPage />} />
-        {/* <Route path="/activity-packages/:slug" element={<ActivityDetailPage />} /> */}
+        <Route path="/activity-packages/:slug" element={<ActivityDetailPage />} />
         <Route path="/rental-packages" element={<PaketRentalPage />} />
-        {/* <Route path="/rental-packages/:slug" element={<RentalDetailPage />} /> */}
+        <Route path="/rental-packages/:slug" element={<RentalDetailPage />} />
 
         {/* Protected Admin routes - tanpa email verification requirement untuk admin */}
         <Route 
@@ -92,14 +93,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/admin/tours/:id" 
-          element={
-            <ProtectedRoute requiredRoles={['admin']} requireVerification={false}>
-              <TourDetail />
-            </ProtectedRoute>
-          } 
-        />
 
         {/* CRUD RENTAL - hanya admin*/}
         <Route 
@@ -126,15 +119,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        {/* <Route 
-          path="/admin/rentals /:id" 
-          element={
-            <ProtectedRoute requiredRoles={['admin']} requireVerification={false}>
-              <RentalDetail />
-            </ProtectedRoute>
-          } 
-        /> */}
-
+  
         {/* CRUD ACTIVITY - hanya admin*/}
         <Route 
           path="/admin/activities" 
@@ -160,16 +145,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        {/* <Route 
-          path="/admin/activities/:id" 
-          element={
-            <ProtectedRoute requiredRoles={['admin']} requireVerification={false}>
-              <RentalDetail />
-            </ProtectedRoute>
-          } 
-        /> */}
-
-
         {/* Protected Customer routes - require email verification */}
         {/* <Route 
           path="/my-bookings" 
