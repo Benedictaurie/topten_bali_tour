@@ -109,7 +109,6 @@ export default function RentalDetailPage() {
             {/* INCLUDES & EXCLUDES jika ada */}
             {(rental.includes || rental.excludes) && (
               <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="text-lg font-semibold mb-4">Features & Conditions</h3>
                 
                 {rental.includes && (
                   <div className="mb-4">
@@ -117,7 +116,7 @@ export default function RentalDetailPage() {
                       <FiPackage className="mr-2" /> Included
                     </h4>
                     <ul className="text-sm space-y-1">
-                      {rental.includes.split(",").map((item, idx) => (
+                      {rental.includes.split("\n'").map((item, idx) => (
                         <li key={idx} className="flex items-start">
                           <span className="text-green-500 mr-2">✓</span>
                           <span>{item.trim()}</span>

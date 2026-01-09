@@ -76,7 +76,13 @@ export default function FrontendLayout({ children }) {
       {/* Navbar */}
       <nav className="flex justify-between items-center px-9 py-7 shadow-md bg-white fixed w-full top-0 z-50">
         <div className="font-bold text-lg">
-          <Link to="/">TOPTEN BALI TOUR</Link>
+          <Link to="/">
+            <img
+              src="/assets/appimages/logo/Logo[1]-black-transparan.png"
+              alt="Logo"
+              className="w-30 h-10 mr-2" 
+            />
+          </Link>
         </div>
         <ul className="flex space-x-6 items-center">
           <li>

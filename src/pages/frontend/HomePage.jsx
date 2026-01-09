@@ -33,7 +33,7 @@ export default function HomePage() {
       try {
         // Fetch semua data paralel
         const [toursRes, activitiesRes, rentalsRes] = await Promise.all([
-          fetch('http://localhost:8000/api/tour-packages').then(res => res.json()),
+          fetch('http://localhost:8000/api/tour-packages/').then(res => res.json()),
           fetch('http://localhost:8000/api/activity-packages/get').then(res => res.json()),
           fetch('http://localhost:8000/api/rental-packages/get').then(res => res.json())
         ]);
@@ -123,7 +123,7 @@ export default function HomePage() {
             {/* Gambar */}
             <div className="order-2 lg:order-1">
               <img 
-                src="/assets/appimages/webimage/Business-Travel.jpg" 
+                src="/assets/appimages/logo/logo-topten.png" 
                 alt="TOPTEN BALI TOUR Team" 
                 className="w-full h-80 lg:h-96 object-cover rounded-lg shadow-lg"
               />

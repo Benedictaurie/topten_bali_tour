@@ -9,18 +9,72 @@ export default function ActivityDetailPage() {
   const { slug } = useParams()
   const [activity, setActivity] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const IMAGE_BASE = "http://localhost:8000/storage/"
 
   useEffect(() => {
-    userActivityService.getActivityBySlug(slug).then(res => {
-      setActivity(res.data)
-      setLoading(false)
-    })
+    const fetchActivity = async () => {
+      try {
+        setLoading(true)
+        const response = await userActivityService.getActivityBySlug(slug)
+          
+        if (response.data) {
+          setActivity(response.data)
+        } else {
+          setError("Activity not found")
+        }
+      } catch (err) {
+        console.error("Error fetching activity:", err)
+        setError("Failed to load activity details")
+      } finally {
+        setLoading(false)
+      }
+    }
+  
+    fetchActivity()
   }, [slug])
 
-  if (loading) return <FrontendLayout><p>Loading...</p></FrontendLayout>
-  if (!activity) return <FrontendLayout><p>Activity not found</p></FrontendLayout>
+  if (loading) {
+    return (
+      <FrontendLayout title="Activity Detail">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-gray-600">Loading activity details...</p>
+          </div>
+        </div>
+      </FrontendLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <FrontendLayout title="Activity Detail">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-500 text-lg mb-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </FrontendLayout>
+    )
+  }
+
+  if (!activity) {
+    return (
+      <FrontendLayout title="Activity Detail">
+        <div className="flex justify-center items-center min-h-screen">
+          <p className="text-gray-600">Activity not found</p>
+        </div>
+      </FrontendLayout>
+    )
+  }
 
   return (
     <FrontendLayout title={activity.name}>
@@ -114,7 +168,7 @@ const IncludesExcludes = ({ includes, excludes }) => (
       <>
         <h4 className="font-semibold text-green-700 mb-2">Included</h4>
         <ul className="text-sm space-y-1 mb-4">
-          {includes.split(",").map((i, idx) => (
+          {includes.split('\n').filter(line => line.trim() !== '').map((i, idx) => (
             <li key={idx}>• {i.trim()}</li>
           ))}
         </ul>
@@ -125,11 +179,11 @@ const IncludesExcludes = ({ includes, excludes }) => (
       <>
         <h4 className="font-semibold text-red-700 mb-2">Excluded</h4>
         <ul className="text-sm space-y-1">
-          {excludes.split(",").map((i, idx) => (
+          {excludes.split('\n').filter(line => line.trim() !== '').map((i, idx) => (
             <li key={idx}>• {i.trim()}</li>
           ))}
-        </ul>
+        </ul> 
       </>
     )}
   </div>
-)
+);
