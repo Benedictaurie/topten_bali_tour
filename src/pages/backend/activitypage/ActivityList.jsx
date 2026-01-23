@@ -1,10 +1,10 @@
 // src/pages/admin/activities/ActivityList.jsx
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import BackendLayout from "../../../layouts/BackendLayout"
-import { FiPlus, FiEdit, FiTrash2, FiEye, FiSearch, FiRefreshCw } from 'react-icons/fi' 
-import { useActivity } from '../../../hooks/useActivity' 
-import { formatRupiah } from "../../../utils/formatRupiah" 
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import BackendLayout from "../../../layouts/BackendLayout";
+import { FiPlus, FiEdit, FiTrash2, FiEye, FiSearch, FiRefreshCw } from 'react-icons/fi';
+import { useActivity } from '../../../hooks/useActivity';
+import { formatRupiah } from "../../../utils/formatRupiah";
 
 const ActivityList = () => {
   const { activities, loading, error, fetchActivities, deleteActivity } = useActivity()

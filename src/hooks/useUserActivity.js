@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { userActivityService } from '../services/userActivityService'
+import { useState, useCallback } from 'react';
+import { userActivityService } from '../services/userActivityService';
 
 export const useUserActivity = () => {
   const [activities, setActivities] = useState([])

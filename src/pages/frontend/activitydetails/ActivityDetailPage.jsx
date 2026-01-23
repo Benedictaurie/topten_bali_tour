@@ -1,9 +1,9 @@
-import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
-import FrontendLayout from "../../../layouts/FrontendLayout"
-import { userActivityService } from "../../../services/userActivityService"
-import BookingForm from "../../../components/frontend/BookingForm"
-import { FiClock, FiUsers, FiDollarSign } from "react-icons/fi"
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import FrontendLayout from "../../../layouts/FrontendLayout";
+import { userActivityService } from "../../../services/userActivityService";
+import BookingForm from "../../../components/frontend/BookingForm";
+import { FiClock, FiUsers, FiDollarSign } from "react-icons/fi";
 
 export default function ActivityDetailPage() {
   const { slug } = useParams()

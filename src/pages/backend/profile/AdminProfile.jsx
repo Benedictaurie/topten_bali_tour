@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import BackendLayout from "../../../layouts/BackendLayout";
-import { useAuth } from '../../../contexts/AuthContext'
+import { useAuth } from '../../../contexts/AuthContext';
 import { FiUser, FiMail, FiSave, FiX } from 'react-icons/fi';
 
 const AdminProfile = () => {
