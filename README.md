@@ -1,16 +1,19 @@
-# React + Vite
+# TOPTEN BALI TOUR - Customer Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[cite_start]Website ini merupakan platform customer-facing untuk **TOPTEN BALI TOUR**, yang dirancang untuk mendigitalisasi proses pemesanan layanan tur, aktivitas, dan penyewaan kendaraan di Bali[cite: 18, 32].
 
-Currently, two official plugins are available:
+## 🚀 Fitur Utama
+- [cite_start]**Katalog Paket Wisata:** Menampilkan paket Private Tour, Activity, dan Rental Kendaraan dengan filter harga dan durasi[cite: 21, 34, 35].
+- [cite_start]**Sistem Booking Online:** Formulir pemesanan dengan validasi data dan konfirmasi otomatis melalui email[cite: 19, 22].
+- [cite_start]**Ulasan & Rating:** Fitur bagi pelanggan untuk memberikan feedback setelah menggunakan layanan[cite: 19, 23].
+- [cite_start]**Admin Panel:** Dashboard khusus admin (web-based) untuk manajemen konten paket, ulasan, dan monitoring notifikasi new booking dari pelanggan[cite: 23, 91].
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tech Stack
+- **Frontend:** React.js + Vite
+- [cite_start]**Styling:** Tailwind CSS (Responsive Design) [cite: 102]
+- [cite_start]**API Communication:** Axios (terhubung ke TOPTEN API) [cite: 116]
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⚙️ Instalasi
+1. Clone repositori: `git clone: https://github.com/Benedictaurie/topten_bali_tour.git`
+2. Install dependencies: `npm install`
+3. Jalankan aplikasi: `npm run dev`
