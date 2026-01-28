@@ -4,7 +4,7 @@
 
 ## 🚀 Fitur Utama
 - [cite_start]**Katalog Paket Wisata:** Menampilkan paket Private Tour, Activity, dan Rental Kendaraan dengan filter harga dan durasi[cite: 21, 34, 35].
-- [cite_start]**Sistem Booking Online:** Formulir pemesanan dengan validasi data dan konfirmasi otomatis melalui email[cite: 19, 22].
+- [cite_start]**Sistem Booking Online:** Formulir pemesanan (booking) dengan validasi data dan konfirmasi otomatis melalui email[cite: 19, 22].
 - [cite_start]**Ulasan & Rating:** Fitur bagi pelanggan untuk memberikan feedback setelah menggunakan layanan[cite: 19, 23].
 - [cite_start]**Admin Panel:** Dashboard khusus admin (web-based) untuk manajemen konten paket, ulasan, dan monitoring notifikasi new booking dari pelanggan[cite: 23, 91].
 
